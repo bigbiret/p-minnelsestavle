@@ -1,44 +1,56 @@
-// ------------ Konstanter for pins ------------
-const uint8_t buttonPin1  = A0;  // S1
-const uint8_t buttonPin2  = A1;  // S3
+const uint8_t buttonPin1  = 4;  // knapp 1
+const uint8_t buttonPin2  = 10;  // knapp 2
+const uint8_t buttonPin3  = 9;  // knapp 3
+const uint8_t buttonPin4  = 13;  // knapp 4
  
-const uint8_t redPin1     = 3;   // D3
-const uint8_t greenPin1   = 2;   // D2
+const uint8_t redPin1     = 3;
+const uint8_t greenPin1   = 2;  
+const uint8_t redPin2     = 6;  
+const uint8_t greenPin2   = 5;  
+const uint8_t redPin3     = 7; 
+const uint8_t greenPin3   = 8;
+const uint8_t redPin4     = 11;
+const uint8_t greenPin4   = 12;
  
-const uint8_t redPin2     = 7;   // D7
-const uint8_t greenPin2   = 8;   // D8
- 
-// ------------ Tilstandsvariabler ------------
-bool state1 = false;  // false = rød på, true = grønn på
+bool state1 = false; 
 bool state2 = false;
+bool state3 = false;
+bool state4 = false;
  
 bool lastBtn1 = LOW;
 bool lastBtn2 = LOW;
+bool lastBtn3 = LOW;
+bool lastBtn4 = LOW;
  
 unsigned long lastDebounceTime1 = 0;
 unsigned long lastDebounceTime2 = 0;
-const unsigned long debounceDelay = 50;  // ms
+unsigned long lastDebounceTime3 = 0;
+unsigned long lastDebounceTime4 = 0;
+const unsigned long debounceDelay = 50; 
  
-// ------------ Setup ------------
 void setup() {
-  // Knappene bruker eksterne pulldown-motstander (220Ω), så vi setter INPUT:
   pinMode(buttonPin1, INPUT);
   pinMode(buttonPin2, INPUT);
- 
-  // LED-utganger
+  pinMode(buttonPin3, INPUT);
+  pinMode(buttonPin4, INPUT);
   pinMode(redPin1,    OUTPUT);
   pinMode(greenPin1,  OUTPUT);
   pinMode(redPin2,    OUTPUT);
   pinMode(greenPin2,  OUTPUT);
- 
-  // Start-tilstand: alle røde på, grønne av
+  pinMode(redPin3,    OUTPUT);
+  pinMode(greenPin3,  OUTPUT);
+  pinMode(redPin4,    OUTPUT);
+  pinMode(greenPin4,  OUTPUT);
   digitalWrite(redPin1,   HIGH);
   digitalWrite(greenPin1, LOW);
   digitalWrite(redPin2,   HIGH);
   digitalWrite(greenPin2, LOW);
+  digitalWrite(redPin3,   HIGH);
+  digitalWrite(greenPin3, LOW);
+  digitalWrite(redPin4,   HIGH);
+  digitalWrite(greenPin4, LOW);
 }
  
-// ------------ Hovedløkke ------------
 void loop() {
   // --- Les og debounc knapp 1 ---
   int reading1 = digitalRead(buttonPin1);
@@ -46,12 +58,10 @@ void loop() {
     lastDebounceTime1 = millis();
   }
   if ((millis() - lastDebounceTime1) > debounceDelay) {
-    // Stabilisert lesning
     static bool btnStable1 = LOW;
     if (reading1 != btnStable1) {
       btnStable1 = reading1;
       if (btnStable1 == HIGH) {
-        // Trykk registrert: toggle state1
         state1 = !state1;
         if (state1) {
           digitalWrite(greenPin1, HIGH);
@@ -75,7 +85,6 @@ void loop() {
     if (reading2 != btnStable2) {
       btnStable2 = reading2;
       if (btnStable2 == HIGH) {
-        // Trykk registrert: toggle state2
         state2 = !state2;
         if (state2) {
           digitalWrite(greenPin2, HIGH);
@@ -88,5 +97,50 @@ void loop() {
     }
   }
   lastBtn2 = reading2;
-}
  
+  // --- Les og debounc knapp 3 ---
+  int reading3 = digitalRead(buttonPin3);
+  if (reading3 != lastBtn3) {
+    lastDebounceTime3 = millis();
+  }
+  if ((millis() - lastDebounceTime3) > debounceDelay) {
+    static bool btnStable3 = LOW;
+    if (reading3 != btnStable3) {
+      btnStable3 = reading3;
+      if (btnStable3 == HIGH) {
+        state3 = !state3;
+        if (state3) {
+          digitalWrite(greenPin3, HIGH);
+          digitalWrite(redPin3,   LOW);
+        } else {
+          digitalWrite(greenPin3, LOW);
+          digitalWrite(redPin3,   HIGH);
+        }
+      }
+    }
+  }
+  lastBtn3 = reading3;
+ 
+  // --- Les og debounc knapp 4 ---
+  int reading4 = digitalRead(buttonPin4);
+  if (reading4 != lastBtn4) {
+    lastDebounceTime4 = millis();
+  }
+  if ((millis() - lastDebounceTime4) > debounceDelay) {
+    static bool btnStable4 = LOW;
+    if (reading4 != btnStable4) {
+      btnStable4 = reading4;
+      if (btnStable4 == HIGH) {
+        state4 = !state4;
+        if (state4) {
+          digitalWrite(greenPin4, HIGH);
+          digitalWrite(redPin4,   LOW);
+        } else {
+          digitalWrite(greenPin4, LOW);
+          digitalWrite(redPin4,   HIGH);
+        }
+      }
+    }
+  }
+  lastBtn4 = reading4;
+}
