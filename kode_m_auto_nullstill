@@ -14,20 +14,20 @@ int  lastButtonState    = LOW;
 bool finished           = false;
 unsigned long lastDebounceTime = 0;
  
-// For én-gangs reset ved 03:00
+
 int lastResetDay = -1;
  
 void setup() {
-  pinMode(BUTTON_PIN,    INPUT);       // ekstern pull-down i hardwaren
+  pinMode(BUTTON_PIN,    INPUT);       
   pinMode(RED_LED_PIN,   OUTPUT);
   pinMode(GREEN_LED_PIN, OUTPUT);
  
-  // Sett start-tilstand
+
   finished = false;
-  digitalWrite(RED_LED_PIN,   HIGH);   // rødt lys ON
-  digitalWrite(GREEN_LED_PIN, LOW);
+  digitalWrite(RED_LED_PIN,   HIGH);   // rødt lys på
+  digitalWrite(GREEN_LED_PIN, LOW)
  
-  // Start RTC
+  
   Wire.begin();
   if (!rtc.begin()) {
     // Hvis RTC ikke svarer
@@ -42,7 +42,7 @@ void setup() {
 void loop() {
   DateTime now = rtc.now();
  
-  // 1) Reset kl. 03:00 én gang per dag
+  
   if (now.hour() == 3 && now.day() != lastResetDay) {
     lastResetDay = now.day();
     finished = false;
@@ -50,7 +50,7 @@ void loop() {
     digitalWrite(GREEN_LED_PIN, LOW);
   }
  
-  // 2) Les knapp med debounce
+  
   int reading = digitalRead(BUTTON_PIN);
   if (reading != lastButtonState) {
     lastDebounceTime = millis();
@@ -65,6 +65,6 @@ void loop() {
   }
   lastButtonState = reading;
  
-  // 3) Kort pause – unngå å blokkere lenge
+ 
   delay(10);
 }
