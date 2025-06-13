@@ -1,0 +1,92 @@
+// ------------ Konstanter for pins ------------
+const uint8_t buttonPin1  = A0;  // S1
+const uint8_t buttonPin2  = A1;  // S3
+ 
+const uint8_t redPin1     = 3;   // D3
+const uint8_t greenPin1   = 2;   // D2
+ 
+const uint8_t redPin2     = 7;   // D7
+const uint8_t greenPin2   = 8;   // D8
+ 
+// ------------ Tilstandsvariabler ------------
+bool state1 = false;  // false = rød på, true = grønn på
+bool state2 = false;
+ 
+bool lastBtn1 = LOW;
+bool lastBtn2 = LOW;
+ 
+unsigned long lastDebounceTime1 = 0;
+unsigned long lastDebounceTime2 = 0;
+const unsigned long debounceDelay = 50;  // ms
+ 
+// ------------ Setup ------------
+void setup() {
+  // Knappene bruker eksterne pulldown-motstander (220Ω), så vi setter INPUT:
+  pinMode(buttonPin1, INPUT);
+  pinMode(buttonPin2, INPUT);
+ 
+  // LED-utganger
+  pinMode(redPin1,    OUTPUT);
+  pinMode(greenPin1,  OUTPUT);
+  pinMode(redPin2,    OUTPUT);
+  pinMode(greenPin2,  OUTPUT);
+ 
+  // Start-tilstand: alle røde på, grønne av
+  digitalWrite(redPin1,   HIGH);
+  digitalWrite(greenPin1, LOW);
+  digitalWrite(redPin2,   HIGH);
+  digitalWrite(greenPin2, LOW);
+}
+ 
+// ------------ Hovedløkke ------------
+void loop() {
+  // --- Les og debounc knapp 1 ---
+  int reading1 = digitalRead(buttonPin1);
+  if (reading1 != lastBtn1) {
+    lastDebounceTime1 = millis();
+  }
+  if ((millis() - lastDebounceTime1) > debounceDelay) {
+    // Stabilisert lesning
+    static bool btnStable1 = LOW;
+    if (reading1 != btnStable1) {
+      btnStable1 = reading1;
+      if (btnStable1 == HIGH) {
+        // Trykk registrert: toggle state1
+        state1 = !state1;
+        if (state1) {
+          digitalWrite(greenPin1, HIGH);
+          digitalWrite(redPin1,   LOW);
+        } else {
+          digitalWrite(greenPin1, LOW);
+          digitalWrite(redPin1,   HIGH);
+        }
+      }
+    }
+  }
+  lastBtn1 = reading1;
+ 
+  // --- Les og debounc knapp 2 ---
+  int reading2 = digitalRead(buttonPin2);
+  if (reading2 != lastBtn2) {
+    lastDebounceTime2 = millis();
+  }
+  if ((millis() - lastDebounceTime2) > debounceDelay) {
+    static bool btnStable2 = LOW;
+    if (reading2 != btnStable2) {
+      btnStable2 = reading2;
+      if (btnStable2 == HIGH) {
+        // Trykk registrert: toggle state2
+        state2 = !state2;
+        if (state2) {
+          digitalWrite(greenPin2, HIGH);
+          digitalWrite(redPin2,   LOW);
+        } else {
+          digitalWrite(greenPin2, LOW);
+          digitalWrite(redPin2,   HIGH);
+        }
+      }
+    }
+  }
+  lastBtn2 = reading2;
+}
+ 
